@@ -158,6 +158,7 @@ def create_user(user: UserCreate):
             (user.username, user.password, user.name, user.role, user.active))
         return result[0]
     finally:
+        conn.commit()
         conn.close()
 
 @app.put("/api/users/{user_id}")
@@ -181,6 +182,7 @@ def update_user(user_id: int, user: UserUpdate):
         result = execute_query(conn, f"UPDATE users SET {', '.join(updates)} WHERE id = %s RETURNING *", params)
         return result[0]
     finally:
+        conn.commit()
         conn.close()
 
 @app.delete("/api/users/{user_id}")
@@ -190,6 +192,7 @@ def delete_user(user_id: int):
         execute_query(conn, "DELETE FROM users WHERE id = %s", (user_id,), fetch=False)
         return {"success": True}
     finally:
+        conn.commit()
         conn.close()
 
 # ===== CLIENTS =====
@@ -210,6 +213,7 @@ def create_client(client: ClientCreate):
             (client.nome, client.email, client.celular, client.empresa, client.cpfcnpj, client.rua, client.numero, client.complemento, client.bairro, client.cidade, client.cep, client.estado))
         return result[0]
     finally:
+        conn.commit()
         conn.close()
 
 @app.put("/api/clients/{client_id}")
@@ -223,6 +227,7 @@ def update_client(client_id: int, client: ClientCreate):
             raise HTTPException(status_code=404, detail="Cliente nao encontrado")
         return result[0]
     finally:
+        conn.commit()
         conn.close()
 
 @app.delete("/api/clients/{client_id}")
@@ -232,6 +237,7 @@ def delete_client(client_id: int):
         execute_query(conn, "DELETE FROM clients WHERE id = %s", (client_id,), fetch=False)
         return {"success": True}
     finally:
+        conn.commit()
         conn.close()
 
 # ===== SERVICES =====
@@ -255,6 +261,7 @@ def create_service(service: ServiceCreate):
             (service.type, service.type_label, service.client_name, service.vehicle_plate, service.vehicle_type, service.vehicle_brand, service.vehicle_model, service.price, service.equipment_number, service.observations, service.photo_plate, service.photo_equip, service.photo_equip_out, service.photo_equip_in, service.client_out, service.client_in, service.equipment_out, service.equipment_in, service.technician, service.role))
         return result[0]
     finally:
+        conn.commit()
         conn.close()
 
 @app.put("/api/services/{service_id}")
@@ -268,6 +275,7 @@ def update_service(service_id: int, service: ServiceCreate):
             raise HTTPException(status_code=404, detail="Servico nao encontrado")
         return result[0]
     finally:
+        conn.commit()
         conn.close()
 
 @app.delete("/api/services/{service_id}")
@@ -277,6 +285,7 @@ def delete_service(service_id: int):
         execute_query(conn, "DELETE FROM services WHERE id = %s", (service_id,), fetch=False)
         return {"success": True}
     finally:
+        conn.commit()
         conn.close()
 
 # ===== LAUDOS =====
@@ -299,6 +308,7 @@ def create_laudo(laudo: LaudoCreate):
             (laudo.client_name, laudo.vehicle_plate, laudo.vehicle_type, laudo.vehicle_brand, laudo.vehicle_model, laudo.photo_plate, laudo.photo_laudo, laudo.conclusion, laudo.technician))
         return result[0]
     finally:
+        conn.commit()
         conn.close()
 
 @app.delete("/api/laudos/{laudo_id}")
@@ -308,6 +318,7 @@ def delete_laudo(laudo_id: int):
         execute_query(conn, "DELETE FROM laudos WHERE id = %s", (laudo_id,), fetch=False)
         return {"success": True}
     finally:
+        conn.commit()
         conn.close()
 
 # ===== PRICING =====
@@ -328,6 +339,7 @@ def create_pricing(pricing: PricingCreate):
             (pricing.technician, pricing.service_type, pricing.service_label, pricing.price, pricing.set_by, pricing.status))
         return result[0]
     finally:
+        conn.commit()
         conn.close()
 
 @app.put("/api/pricing/{pricing_id}")
@@ -341,6 +353,7 @@ def update_pricing(pricing_id: int, pricing: PricingCreate):
             raise HTTPException(status_code=404, detail="Preco nao encontrado")
         return result[0]
     finally:
+        conn.commit()
         conn.close()
 
 @app.delete("/api/pricing/{pricing_id}")
@@ -350,6 +363,7 @@ def delete_pricing(pricing_id: int):
         execute_query(conn, "DELETE FROM pricing WHERE id = %s", (pricing_id,), fetch=False)
         return {"success": True}
     finally:
+        conn.commit()
         conn.close()
 
 # ===== PAYMENTS =====
@@ -370,6 +384,7 @@ def create_payment(payment: PaymentCreate):
             (payment.technician, payment.period_type, payment.period_start, payment.period_end, payment.amount, payment.paid, payment.paid_by))
         return result[0]
     finally:
+        conn.commit()
         conn.close()
 
 # ===== SYSTEM COSTS =====
@@ -393,6 +408,7 @@ def create_system_cost(cost: SystemCostCreate):
             (cost.cost_per_user, cost.cost_per_record, cost.cost_per_laudo, cost.set_by))
         return result[0]
     finally:
+        conn.commit()
         conn.close()
 
 # ===== SYNC =====
@@ -411,6 +427,7 @@ def sync_services(services: List[dict]):
                 synced_count += 1
         return {"synced": synced_count}
     finally:
+        conn.commit()
         conn.close()
 
 @app.get("/")
