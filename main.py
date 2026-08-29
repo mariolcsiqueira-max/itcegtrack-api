@@ -65,6 +65,7 @@ class ClientCreate(BaseModel):
     cidade: Optional[str] = None
     cep: Optional[str] = None
     estado: Optional[str] = None
+    status: str = "ativo"
 
 class ServiceCreate(BaseModel):
     type: str
@@ -209,8 +210,8 @@ def create_client(client: ClientCreate):
     conn = get_conn()
     try:
         result = execute_query(conn,
-            "INSERT INTO clients (nome, email, celular, empresa, cpfcnpj, rua, numero, complemento, bairro, cidade, cep, estado) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING *",
-            (client.nome, client.email, client.celular, client.empresa, client.cpfcnpj, client.rua, client.numero, client.complemento, client.bairro, client.cidade, client.cep, client.estado))
+            "INSERT INTO clients (nome, email, celular, empresa, cpfcnpj, rua, numero, complemento, bairro, cidade, cep, estado, status) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) RETURNING *",
+            (client.nome, client.email, client.celular, client.empresa, client.cpfcnpj, client.rua, client.numero, client.complemento, client.bairro, client.cidade, client.cep, client.estado, client.status))
         return result[0]
     finally:
         conn.commit()
@@ -221,8 +222,8 @@ def update_client(client_id: int, client: ClientCreate):
     conn = get_conn()
     try:
         result = execute_query(conn,
-            "UPDATE clients SET nome=%s, email=%s, celular=%s, empresa=%s, cpfcnpj=%s, rua=%s, numero=%s, complemento=%s, bairro=%s, cidade=%s, cep=%s, estado=%s WHERE id = %s RETURNING *",
-            (client.nome, client.email, client.celular, client.empresa, client.cpfcnpj, client.rua, client.numero, client.complemento, client.bairro, client.cidade, client.cep, client.estado, client_id))
+            "UPDATE clients SET nome=%s, email=%s, celular=%s, empresa=%s, cpfcnpj=%s, rua=%s, numero=%s, complemento=%s, bairro=%s, cidade=%s, cep=%s, estado=%s, status=%s WHERE id = %s RETURNING *",
+            (client.nome, client.email, client.celular, client.empresa, client.cpfcnpj, client.rua, client.numero, client.complemento, client.bairro, client.cidade, client.cep, client.estado, client.status, client_id))
         if not result:
             raise HTTPException(status_code=404, detail="Cliente nao encontrado")
         return result[0]
